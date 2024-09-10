@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿//Written by 世界地図(Github: https://github.com/OR-11)
+using System.Security.Cryptography;
 using System.Text;
 
 namespace SoukousaiLuncherLogAnalyzer
@@ -23,6 +24,8 @@ namespace SoukousaiLuncherLogAnalyzer
         static List<GameLog> Logs = new List<GameLog>();
 
         static List<string> GameNames = new List<string>();
+
+        static int Start, End;
 
         static string Result = "";
 
@@ -98,6 +101,11 @@ namespace SoukousaiLuncherLogAnalyzer
 
         static void Analyaize(string[] Patha)
         {
+            Console.WriteLine("期間を指定してください(unixtime)");
+            Console.Write("期間始め:");
+            Start = int.Parse(Console.ReadLine());
+            Console.Write("期間最後:");
+            End = int.Parse(Console.ReadLine());
             foreach (string i in ContainsLogsDirectoryPath)//実際のログファイルだけをとりだす
             {
                 {
@@ -176,7 +184,11 @@ namespace SoukousaiLuncherLogAnalyzer
                 Result += $"{i}," +
                     $"{Logs.Where(x => x.Name == i).ToArray().Length},{Logs.Where(x => x.Name == i && x.ExitTime != null).Select(x => x.ExitTime - x.StartTime).Sum()}s," +
                     $"{Logs.Where(x => x.Name == i && x.ExitTime != null).Where(x => (x.ExitTime - x.StartTime) >= 60).ToArray().Length},{Logs.Where(x => x.Name == i && x.ExitTime != null).Where(x => (x.ExitTime - x.StartTime) >= 60).Select(x => x.ExitTime - x.StartTime).ToArray().Sum()}s," +
-                    $"{Logs.Where(x => x.Name == i && x.ExitTime == null).ToArray().Length}\n\n";
+                    $"{Logs.Where(x => x.Name == i && x.ExitTime == null).ToArray().Length}\n" +
+                    $"指定期間:," +
+                    $"{Logs.Where(x => x.StartTime >= Start && x.StartTime <= End).Where(x => x.Name == i).ToArray().Length},{Logs.Where(x => x.StartTime >= Start && x.StartTime <= End).Where(x => x.Name == i && x.ExitTime != null).Select(x => x.ExitTime - x.StartTime).Sum()}s," +
+                    $"{Logs.Where(x => x.StartTime >= Start && x.StartTime <= End).Where(x => x.Name == i && x.ExitTime != null).Where(x => (x.ExitTime - x.StartTime) >= 60).ToArray().Length},{Logs.Where(x => x.StartTime >= Start && x.StartTime <= End).Where(x => x.Name == i && x.ExitTime != null).Where(x => (x.ExitTime - x.StartTime) >= 60).Select(x => x.ExitTime - x.StartTime).ToArray().Sum()}s," +
+                    $"{Logs.Where(x => x.StartTime >= Start && x.StartTime <= End).Where(x => x.Name == i && x.ExitTime == null).ToArray().Length}\n\n";
             }
 
             Console.WriteLine("集計結果:");
